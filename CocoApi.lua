@@ -190,23 +190,6 @@ end
   data.annIdsPerCat = makeMap('categories','category_id')
   -- save to disk
 
-  local makeMap = function( type, type_id )
-    if not data[type] or not data.annotations then return nil end
-    local invmap, n = {}, data[type].id:size(1)
-    for i=1,n do invmap[data[type].id[i]]=i end
-    local map = {}; for i=1,n do map[i]={} end
-    data.annotations[type_id..'x'] = data.annotations[type_id]:clone()
-    for i=1,data.annotations.id:size(1) do
-      local id = invmap[data.annotations[type_id][i]]
-      data.annotations[type_id..'x'][i] = id
-      table.insert(map[id],data.annotations.id[i])
-    end
-    for i=1,n do map[i]=torch.LongTensor(map[i]) end
-    return coco.TensorTable(map)
-  end
-  data.annIdsPerImg = makeMap('images','image_id')
-  data.annIdsPerCat = makeMap('categories','category_id')
-
   torch.save( torchFile, data )
   print(('convert: complete [%.2f s]'):format(torch.toc(tic)))
 end
